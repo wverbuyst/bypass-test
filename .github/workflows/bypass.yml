@@ -15,11 +15,21 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2.4.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Extract PR URL
         id: extract
         run: echo "pr_url=${{ github.event.issue.pull_request.html_url }}" >> "$GITHUB_OUTPUT"
+
+      - name: Approve PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Merge PR
         run: gh pr merge --merge --auto "$PR_URL"
