@@ -1,0 +1,19 @@
+name: Conditional Bypass Merge
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  bypass:
+    if: contains(github.event.comment.body, '@bypass-ok-i-know-what-i-am-doing-i-am-responsible-merge-it')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Merge PR with bypass
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
