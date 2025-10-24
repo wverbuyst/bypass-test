@@ -1,3 +1,9 @@
+name: Conditional Bypass Merge
+
+on:
+  issue_comment:
+    types: [created]
+
 jobs:
   bypass:
     if: |
