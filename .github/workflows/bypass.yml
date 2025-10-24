@@ -1,9 +1,3 @@
-name: Conditional Bypass Merge
-
-on:
-  issue_comment:
-    types: [created]
-
 jobs:
   bypass:
     if: |
@@ -15,12 +9,14 @@ jobs:
       contents: write
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Extract PR URL
         id: extract
         run: echo "pr_url=${{ github.event.issue.pull_request.html_url }}" >> "$GITHUB_OUTPUT"
 
       - name: Merge PR
-        run: gh pr merge "$PR_URL" --merge --delete-branch
+        run: gh pr merge "$PR_URL" --merge --auto --delete-branch
         env:
           PR_URL: ${{ steps.extract.outputs.pr_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
