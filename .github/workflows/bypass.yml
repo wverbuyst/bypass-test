@@ -6,14 +6,21 @@ on:
 
 jobs:
   bypass:
-    if: contains(github.event.comment.body, '@bypass-ok-i-know-what-i-am-doing-i-am-responsible-merge-it')
+    if: |
+      contains(github.event.comment.body, '@bypass-ok-i-know-what-i-am-doing-i-am-responsible-merge-it') &&
+      github.event.issue.pull_request != null
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
+
     steps:
-      - name: Merge PR with bypass
-        run: gh pr merge --auto --merge "$PR_URL"
+      - name: Extract PR URL
+        id: extract
+        run: echo "pr_url=${{ github.event.issue.pull_request.html_url }}" >> "$GITHUB_OUTPUT"
+
+      - name: Merge PR
+        run: gh pr merge "$PR_URL" --merge --delete-branch
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PR_URL: ${{ steps.extract.outputs.pr_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
