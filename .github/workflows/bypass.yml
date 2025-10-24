@@ -22,7 +22,7 @@ jobs:
         run: echo "pr_url=${{ github.event.issue.pull_request.html_url }}" >> "$GITHUB_OUTPUT"
 
       - name: Merge PR
-        run: gh pr merge "$PR_URL" --merge --auto --delete-branch
+        run: gh pr merge --merge --auto "$PR_URL"
         env:
           PR_URL: ${{ steps.extract.outputs.pr_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
